@@ -49,7 +49,8 @@
             this.Name = "FormBouncyBallAnimation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Bouncing Ball Animation";
-            this.Click += new System.EventHandler(this.FormBouncyBallAnimation_Click);
+            this.Load += new System.EventHandler(this.FormBouncyBallAnimation_Load);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormBouncyBallAnimation_MouseUp);
             this.ResumeLayout(false);
 
         }

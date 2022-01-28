@@ -14,22 +14,40 @@ namespace Week5Day4Demo
     {
         private readonly Form _form;
         private readonly PictureBox _pictureBox;
+        private readonly Thread _thread;
+        //Step 1
+        private readonly CancellationTokenSource _cts;
 
         public FootBall(Form form)
         {
             _form = form;
             _pictureBox = CreatePictureBoxWithFootBallImage();
+            _thread = new Thread(WorkerThreadBounceBall)
+            {
+                IsBackground = true
+            };
+
+            //Step 1
+            //_cts = new CancellationTokenSource();
         }
 
         public void Bounce()
         {
-            var thread = new Thread(WorkerThreadBounceBall);
-            thread.Start();
+            _thread.Start();
+        }
+        public void StopBounce()
+        {
+            //_thread.Abort();
+
+            //Step 2
+            _cts.Cancel();
+            _form.Controls.Remove(_pictureBox);
         }
 
         private void WorkerThreadBounceBall()
         {
-            var random = new Random();
+            var seed = Guid.NewGuid().GetHashCode();
+            var random = new Random(seed);
 
             var x = random.Next(0, _form.Width - _pictureBox.Width);
             var y = random.Next(0, _form.Height - _pictureBox.Height);
@@ -40,6 +58,10 @@ namespace Week5Day4Demo
 
             do
             {
+                // Step 3
+                if (_cts.IsCancellationRequested)
+                    return;
+
                 position.X += xFactor;
                 position.Y += yFactor;
 
@@ -62,7 +84,7 @@ namespace Week5Day4Demo
                     _pictureBox.Top = position.Y;
                 });
 
-                Thread.Sleep(10);
+                Thread.Sleep(2);
 
             } while (true);
         }
